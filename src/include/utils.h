@@ -1,8 +1,6 @@
 #ifndef TASK_MANAGER_UTILS_H
 #define TASK_MANAGER_UTILS_H
 
-#include <common.h>
-#include <stdlib.h>
 #include <string.h>
 
 #define DEFINE_ENUM_MAP(type)                                                  \

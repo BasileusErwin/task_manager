@@ -3,13 +3,11 @@
 
 #include <common.h>
 #include <console.h>
-#include <string.h>
-#include <utils.h>
 
 /**
  * Task status enum
  * */
-typedef enum {
+typedef enum TaskStatus {
   PENDING,
   IN_PROGRESS,
   BLOCKED,
@@ -30,13 +28,16 @@ DEFINE_FUNCTION_ENUM_TO_STRING(fromTaskStatus, TaskStatus);
  * @field status Task status
  * @field description Task description
  * */
-struct Task {
+typedef struct Task {
   unsigned int id;
   char *name;
   TaskStatus status;
   char *description;
-};
+} Task;
 
-struct Task *createTask(const int id, const char *name, TaskStatus status, const char* description);
+Task *createTask(const int id, const char *name, TaskStatus status,
+                 const char *description);
+void initTask(Task *task);
+void freeTask(Task *task);
 
 #endif

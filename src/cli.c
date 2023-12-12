@@ -1,5 +1,4 @@
 #include <cli.h>
-#include <stdio.h>
 
 const SubCommandMap subCommandMap[] = {
     {"add", ADD},   {"remove", REMOVE}, {"list", LIST},
@@ -66,10 +65,10 @@ void showHelp() {
 /**
  * handle the add command and create a new task
  **/
-int handleAddCommand(int argc, const char **argv) {
+Task *handleAddCommand(int argc, const char **argv) {
   if (argc < 3) {
     printError("Missing task name");
-    return 1;
+    exit(1);
   }
 
   const char *taskName = argv[2];
@@ -112,7 +111,7 @@ int handleAddCommand(int argc, const char **argv) {
           statusStr = argv[i + 1];
           i++;
         } else {
-          return 1;
+          return NULL;
         }
       } else {
         statusStr = argv[i] + 2;
@@ -133,36 +132,40 @@ int handleAddCommand(int argc, const char **argv) {
     exit(1);
   }
 
-  printSuccess("Task created: ");
-  print("Id: ", ANSI_COLOR_GREEN, ANSI_FONT_BOLD);
-  print(concat(intToString(task->id), "\n"), ANSI_COLOR_RESET, ANSI_FONT_BOLD);
-  print("Name: ", ANSI_COLOR_GREEN, ANSI_FONT_BOLD);
-  print(concat(task->name, "\n"), ANSI_COLOR_RESET, ANSI_FONT_BOLD);
-  print("Status: ", ANSI_COLOR_GREEN, ANSI_FONT_BOLD);
-  print(concat(fromTaskStatusToString(task->status), "\n"), ANSI_COLOR_RESET,
-        ANSI_FONT_BOLD);
-  print("Description: ", ANSI_COLOR_GREEN, ANSI_FONT_BOLD);
-  print(concat(task->description, "\n"), ANSI_COLOR_RESET, ANSI_FONT_BOLD);
+  saveTasks(task);
 
-  free(task->name);
-  free(task->description);
-  free(task);
-
-  return 1;
+  return task;
 }
 
-int runSubcommand(const char *arg, int argc, const char **argv) {
+void handleListCommand(TaskManager *taskManager) {
+  for (int i = 0; i < taskManager->tasksCount; i++) {
+    Task task = taskManager->tasks[i];
+    printf("%d. %s\n", task.id, task.name);
+    printf("\tStatus: %s\n", fromTaskStatusToString(task.status));
+    printf("\tDescription: %s\n", task.description);
+  }
+}
+
+int runSubcommand(const char *arg, int argc, const char **argv,
+                  TaskManager *taskManager) {
   SubCommand subcommand = toSubCommandFromString(arg);
 
   switch (subcommand) {
-  case ADD:
-    handleAddCommand(argc, argv);
+  case ADD: {
+    const Task *task = handleAddCommand(argc, argv);
+
+    taskManager->tasks = (Task *)realloc(
+        taskManager->tasks, (taskManager->tasksCount + 1) * sizeof(Task));
+
+    taskManager->tasks[taskManager->tasksCount] = *task;
+
     return 0;
+  }
   case REMOVE:
     printf("REMOVE\n");
     return 0;
   case LIST:
-    printf("LIST\n");
+    handleListCommand(taskManager);
     return 0;
   case HELP:
     showHelp();
@@ -188,7 +191,7 @@ int runOption(const char *arg) {
   return 1;
 }
 
-void cli(const int argc, const char **argv) {
+void cli(const int argc, const char **argv, TaskManager *taskManger) {
   for (int i = 1; i < argc; i++) {
     const char *arg = argv[i];
 
@@ -201,7 +204,7 @@ void cli(const int argc, const char **argv) {
       return;
     }
 
-    if (runSubcommand(arg, argc, argv) == 0) {
+    if (runSubcommand(arg, argc, argv, taskManger) == 0) {
       return;
     }
 

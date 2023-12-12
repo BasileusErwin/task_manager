@@ -37,6 +37,11 @@ void printWarning(const char *message) {
          message);
 }
 
+void printDebug(const char *message) {
+  printf(ANSI_COLOR_CYAN ANSI_FONT_BOLD "[DEBUG] " ANSI_COLOR_RESET "%s\n",
+         message);
+}
+
 /**
  * This function prints an info message.
  * Layout:

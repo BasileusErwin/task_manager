@@ -1,5 +1,4 @@
 #include <main.h>
-#include <task.h>
 
 int main(int argc, const char **argv) {
   if (argc < 2) {
@@ -7,6 +6,14 @@ int main(int argc, const char **argv) {
     return 1;
   }
 
-  cli(argc, argv);
+  TaskManager *taskManager = (TaskManager *)malloc(sizeof(TaskManager));
+  initTaskManager(taskManager);
+
+  loadTasks(taskManager);
+
+  cli(argc, argv, taskManager);
+
+  freeTaskManager(taskManager);
+
   return 0;
 }

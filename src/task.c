@@ -11,8 +11,9 @@ DEFINE_ENUM_TO_STRING(fromTaskStatus, TaskStatus, taskStatusMap,
 DEFINE_ENUM_PARSER(toTaskStatus, TaskStatus, taskStatusMap,
                    sizeof(taskStatusMap) / sizeof(taskStatusMap[0]), -1);
 
-struct Task *createTask(const int id, const char *name, TaskStatus status, const char* description) {
-  struct Task *task = (struct Task *)malloc(sizeof(struct Task));
+Task *createTask(const int id, const char *name, TaskStatus status,
+                 const char *description) {
+  Task *task = (Task *)malloc(sizeof(Task));
 
   if (task == NULL) {
     printError("Cannot allocate memory for task");
@@ -25,4 +26,16 @@ struct Task *createTask(const int id, const char *name, TaskStatus status, const
   task->description = strdup(description);
 
   return task;
+}
+
+void initTask(Task *task) {
+  task->id = 0;
+  task->name = "";
+  task->status = PENDING;
+  task->description = "";
+}
+
+void freeTask(Task *task) {
+  free(task->name);
+  free(task->description);
 }

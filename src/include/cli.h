@@ -3,9 +3,8 @@
 
 #include <common.h>
 #include <console.h>
-#include <utils.h>
-#include <stdio.h>
 #include <task.h>
+#include <task_manager.h>
 
 #define VERSION_NUMBER "0.0.1"
 
@@ -39,6 +38,6 @@ DEFINE_FUNCTION_ENUM_TO_STRING(fromOption, Option);
 
 void showHelp();
 Option getOption(const char *str);
-void cli(const int argc, const char **argv);
+void cli(const int argc, const char **argv, TaskManager* taskManager);
 
 #endif

@@ -4,5 +4,7 @@
 #include <common.h>
 #include <cli.h>
 #include <console.h>
+#include <task.h>
+#include <task_manager.h>
 
 #endif
