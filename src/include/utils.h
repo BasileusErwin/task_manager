@@ -2,6 +2,7 @@
 #define TASK_MANAGER_UTILS_H
 
 #include <string.h>
+#include <uuid/uuid.h>
 
 #define DEFINE_ENUM_MAP(type)                                                  \
   typedef struct {                                                             \
@@ -43,5 +44,7 @@
 
 char *concat(const char *s1, const char *s2);
 char *intToString(unsigned int num);
+
+void generateUUID(char *uuid);
 
 #endif

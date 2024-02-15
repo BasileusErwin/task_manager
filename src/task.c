@@ -11,13 +11,19 @@ DEFINE_ENUM_TO_STRING(fromTaskStatus, TaskStatus, taskStatusMap,
 DEFINE_ENUM_PARSER(toTaskStatus, TaskStatus, taskStatusMap,
                    sizeof(taskStatusMap) / sizeof(taskStatusMap[0]), -1);
 
-Task *createTask(const int id, const char *name, TaskStatus status,
-                 const char *description) {
+Task *createTask(const int id, const char uuid[UUID_SIZE], const char *name,
+                 TaskStatus status, const char *description) {
   Task *task = (Task *)malloc(sizeof(Task));
 
   if (task == NULL) {
     printError("Cannot allocate memory for task");
     exit(1);
+  }
+
+  if (uuid == NULL) {
+    generateUUID(task->uuid);
+  } else {
+    strcpy(task->uuid, uuid);
   }
 
   task->id = id;
@@ -33,6 +39,7 @@ void initTask(Task *task) {
   task->name = "";
   task->status = PENDING;
   task->description = "";
+  task->uuid[0] = '\0';
 }
 
 void freeTask(Task *task) {

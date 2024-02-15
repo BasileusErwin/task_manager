@@ -1,3 +1,4 @@
+#include "console.h"
 #include <cli.h>
 
 const SubCommandMap subCommandMap[] = {
@@ -65,7 +66,7 @@ void showHelp() {
 /**
  * handle the add command and create a new task
  **/
-Task *handleAddCommand(int argc, const char **argv) {
+Task *handleAddCommand(int argc, const char **argv, int taskLenght) {
   if (argc < 3) {
     printError("Missing task name");
     exit(1);
@@ -125,7 +126,8 @@ Task *handleAddCommand(int argc, const char **argv) {
     }
   }
 
-  struct Task *task = createTask(1, taskName, status, description);
+  struct Task *task =
+      createTask(taskLenght + 1, NULL, taskName, status, description);
 
   if (task == NULL) {
     printError("Cannot create task");
@@ -134,6 +136,8 @@ Task *handleAddCommand(int argc, const char **argv) {
 
   saveTasks(task);
 
+  printSuccess("Added task successfully");
+
   return task;
 }
 
@@ -141,6 +145,7 @@ void handleListCommand(TaskManager *taskManager) {
   for (int i = 0; i < taskManager->tasksCount; i++) {
     Task task = taskManager->tasks[i];
     printf("%d. %s\n", task.id, task.name);
+    printf("\tUUID: %s\n", task.uuid);
     printf("\tStatus: %s\n", fromTaskStatusToString(task.status));
     printf("\tDescription: %s\n", task.description);
   }
@@ -152,7 +157,7 @@ int runSubcommand(const char *arg, int argc, const char **argv,
 
   switch (subcommand) {
   case ADD: {
-    const Task *task = handleAddCommand(argc, argv);
+    const Task *task = handleAddCommand(argc, argv, taskManager->tasksCount);
 
     taskManager->tasks = (Task *)realloc(
         taskManager->tasks, (taskManager->tasksCount + 1) * sizeof(Task));

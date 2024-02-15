@@ -3,14 +3,14 @@
 
 #include <common.h>
 #include <console.h>
-#include <task.h>
-#include <json-c/json_object.h>
 #include <json-c/json.h>
+#include <json-c/json_object.h>
+#include <task.h>
 
 typedef struct TaskManager {
   Task *tasks;
   int tasksCount;
-}TaskManager;
+} TaskManager;
 
 void initTaskManager(TaskManager *taskManager);
 void freeTaskManager(TaskManager *taskManager);

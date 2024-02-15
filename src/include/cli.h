@@ -38,6 +38,6 @@ DEFINE_FUNCTION_ENUM_TO_STRING(fromOption, Option);
 
 void showHelp();
 Option getOption(const char *str);
-void cli(const int argc, const char **argv, TaskManager* taskManager);
+void cli(const int argc, const char **argv, TaskManager *taskManager);
 
 #endif

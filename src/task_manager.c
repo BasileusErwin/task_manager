@@ -1,4 +1,3 @@
-#include "task.h"
 #include <task_manager.h>
 
 void initTaskManager(TaskManager *taskManager) {
@@ -21,6 +20,7 @@ void loadTasks(TaskManager *taskManager) {
   struct json_object *parsedJson;
   struct json_object *description;
   struct json_object *status;
+  struct json_object *uuid;
 
   if (file == NULL) {
     printError("Error opening file: task.data");
@@ -39,18 +39,20 @@ void loadTasks(TaskManager *taskManager) {
     }
 
     json_object_object_get_ex(parsedJson, "description", &description);
-
     json_object_object_get_ex(parsedJson, "status", &status);
+    json_object_object_get_ex(parsedJson, "uuid", &uuid);
 
     taskManager->tasks = (Task *)realloc(
         taskManager->tasks, (taskManager->tasksCount + 1) * sizeof(Task));
 
     const char *descriptionStr = json_object_get_string(description);
+    const char *uuidStr = json_object_get_string(uuid);
     TaskStatus statusEnum =
         toTaskStatusFromString(json_object_get_string(status));
 
-    const Task *newTask = createTask(taskManager->tasksCount, descriptionStr,
-                                     statusEnum, descriptionStr);
+    const Task *newTask =
+        createTask(taskManager->tasksCount, uuidStr, descriptionStr, statusEnum,
+                   descriptionStr);
 
     taskManager->tasks[taskManager->tasksCount] = *newTask;
     taskManager->tasksCount += 1;
@@ -67,8 +69,39 @@ void saveTasks(Task *task) {
     exit(1);
   }
 
-  fprintf(file, "{\"description\": \"%s\", \"status\": \"%s\"}\n",
-          task->description, fromTaskStatusToString(task->status));
+  char *taskJSON = "{";
+
+  if (task->name != NULL) {
+    taskJSON = concat(taskJSON, "\"name\": \"");
+    taskJSON = concat(taskJSON, task->name);
+    taskJSON = concat(taskJSON, "\", ");
+  }
+
+  if (task->description != NULL) {
+    taskJSON = concat(taskJSON, "\"description\": \"");
+    taskJSON = concat(taskJSON, task->description);
+    taskJSON = concat(taskJSON, "\", ");
+  }
+
+  if (task->status != -1) {
+    taskJSON = concat(taskJSON, "\"status\": \"");
+    taskJSON = concat(taskJSON, fromTaskStatusToString(task->status));
+    taskJSON = concat(taskJSON, "\", ");
+  }
+
+  if (task->uuid != NULL) {
+    taskJSON = concat(taskJSON, "\"uuid\": \"");
+    taskJSON = concat(taskJSON, task->uuid);
+    taskJSON = concat(taskJSON, "\", ");
+  }
+
+  taskJSON = concat(taskJSON, "\"id\": ");
+  taskJSON = concat(taskJSON, intToString(task->id));
+  taskJSON = concat(taskJSON, ", ");
+
+  taskJSON = concat(taskJSON, "}");
+
+  fprintf(file, "%s\n", taskJSON);
 
   fclose(file);
 }

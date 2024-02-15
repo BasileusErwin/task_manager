@@ -4,6 +4,8 @@
 #include <common.h>
 #include <console.h>
 
+#define UUID_SIZE 37
+
 /**
  * Task status enum
  * */
@@ -33,10 +35,11 @@ typedef struct Task {
   char *name;
   TaskStatus status;
   char *description;
+  char uuid[UUID_SIZE];
 } Task;
 
-Task *createTask(const int id, const char *name, TaskStatus status,
-                 const char *description);
+Task *createTask(const int id, const char uuid[UUID_SIZE], const char *name,
+                 TaskStatus status, const char *description);
 void initTask(Task *task);
 void freeTask(Task *task);
 

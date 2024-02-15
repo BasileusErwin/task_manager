@@ -1,6 +1,6 @@
-#include <utils.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <utils.h>
 
 /**
  * Concatenate two strings
@@ -29,7 +29,13 @@ char *concat(const char *s1, const char *s2) {
 char *intToString(unsigned int num) {
   char *str = malloc(sizeof(char) * 10);
 
-  sprintf(str, "%d", num);
+  sprintf(str, "%u", num);
 
   return str;
+}
+
+void generateUUID(char *uuid) {
+  uuid_t binuuid;
+  uuid_generate_random(binuuid);
+  uuid_unparse(binuuid, uuid);
 }
